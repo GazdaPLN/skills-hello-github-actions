@@ -28,6 +28,7 @@ jobs:
     name: Post next step content
     needs: [find_exercise]
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     env:
       ISSUE_URL: ${{ needs.find_exercise.outputs.issue-url }}
     steps:

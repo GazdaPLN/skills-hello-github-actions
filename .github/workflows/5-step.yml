@@ -28,6 +28,7 @@ jobs:
     name: Post review content
     needs: [find_exercise]
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     env:
       ISSUE_URL: ${{ needs.find_exercise.outputs.issue-url }}
 
@@ -54,6 +55,7 @@ jobs:
     name: Disable this workflow
     needs: [find_exercise, post_review_content]
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4

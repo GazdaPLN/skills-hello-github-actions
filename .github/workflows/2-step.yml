@@ -25,6 +25,7 @@ jobs:
   check_step_work:
     name: Check step work
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: [find_exercise]
     env:
       ISSUE_URL: ${{ needs.find_exercise.outputs.issue-url }}
@@ -121,6 +122,7 @@ jobs:
     name: Post next step content
     needs: [find_exercise, check_step_work]
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     env:
       ISSUE_URL: ${{ needs.find_exercise.outputs.issue-url }}
 
