@@ -7,6 +7,10 @@ on:
     paths:
       - ".github/**"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
   actions: write
@@ -23,6 +27,7 @@ jobs:
   check_step_work:
     name: Check step work
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     needs: [find_exercise]
     env:
       ISSUE_URL: ${{ needs.find_exercise.outputs.issue-url }}
@@ -36,7 +41,7 @@ jobs:
         with:
           repository: skills/exercise-toolkit
           path: exercise-toolkit
-          ref: v0.6.0
+          ref: v0.8.1
 
       - name: Update comment - checking work
         run: |
@@ -138,6 +143,7 @@ jobs:
     name: Post next step content
     needs: [find_exercise, check_step_work]
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     env:
       ISSUE_URL: ${{ needs.find_exercise.outputs.issue-url }}
 
@@ -145,19 +151,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Get response templates
-        uses: actions/checkout@v4
-        with:
-          repository: skills/exercise-toolkit
-          path: exercise-toolkit
-          ref: v0.6.0
-
       - name: Create comment - add step content
         run: |
           gh issue comment "$ISSUE_URL" \
             --body-file "$STEP_2_FILE"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout exercise-toolkit for templates
+        uses: actions/checkout@v4
+        with:
+          repository: skills/exercise-toolkit
+          path: exercise-toolkit
+          ref: v0.8.1
 
       - name: Create comment - watching for progress
         run: |
