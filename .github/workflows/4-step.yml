@@ -7,6 +7,10 @@ on:
     types:
       - opened
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
   actions: write
@@ -30,19 +34,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Get response templates
-        uses: actions/checkout@v4
-        with:
-          repository: skills/exercise-toolkit
-          path: exercise-toolkit
-          ref: v0.6.0
-
       - name: Create comment - add step content
         run: |
           gh issue comment "$ISSUE_URL" \
             --body-file "$STEP_5_FILE"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Checkout exercise-toolkit for templates
+        uses: actions/checkout@v4
+        with:
+          repository: skills/exercise-toolkit
+          path: exercise-toolkit
+          ref: v0.8.1
 
       - name: Create comment - watching for progress
         run: |
